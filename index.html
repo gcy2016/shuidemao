@@ -61,8 +61,8 @@ details ul{margin:6px 0 0;padding-left:18px}
 .online .btns{flex-direction:row}
 .netonly{display:none}.net .netonly{display:block}.net .localonly{display:none}
 #waitTxt{text-align:center;font-size:16px;line-height:1.8}
-#pauseBtn{position:fixed;top:max(8px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:4;display:none;border:none;background:rgba(0,0,0,.3);color:#fff;border-radius:999px;padding:4px 12px;font:inherit;font-size:12px}
-.portrait #pauseBtn{top:auto;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 130px)}
+#pauseBtn{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:4;display:none;border:none;background:rgba(0,0,0,.3);color:#fff;border-radius:999px;padding:4px 12px;font:inherit;font-size:12px}
+.portrait #pauseBtn{top:auto;left:50%;transform:translateX(-50%);bottom:calc(max(14px,env(safe-area-inset-bottom)) + 130px)}
 </style>
 </head>
 <body>
@@ -874,31 +874,35 @@ function drawFx(){
 }
 function drawHUD(){
   // 猫心天平
-  const a=G.aff,share=a[0]/(a[0]+a[1]),bw=420,bx=W/2-bw/2,by=H-34;
-  ctx.fillStyle='rgba(255,248,239,.92)';rr(bx-80,by-16,bw+160,36,18);ctx.fill();
+  const a=G.aff,share=a[0]/(a[0]+a[1]),bw=440,bx=W/2-bw/2,by=H-38;
+  ctx.fillStyle='rgba(255,248,239,.95)';rr(bx-100,by-22,bw+200,46,23);ctx.fill();
   // 像拔河：猫头往谁那边偏，就是更喜欢谁；中线到猫头之间涂领先一方的颜色
   const cx=W/2+(0.5-share)*bw;
-  ctx.fillStyle='#ead9c6';rr(bx,by-4,bw,12,6);ctx.fill();
-  ctx.fillStyle=share>=0.5?'#ff6f91':'#4f9dff';rr(Math.min(cx,W/2),by-4,Math.abs(cx-W/2),12,6);ctx.fill();
-  ctx.fillStyle='#9a8270';ctx.fillRect(W/2-1,by-8,2,20);
-  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 13px "PingFang SC","Microsoft YaHei",sans-serif';
-  ctx.fillStyle='#d9476e';ctx.fillText(G.players[0].name,bx-40,by+2);ctx.fillStyle='#2f6fc0';ctx.fillText(G.players[1].name,bx+bw+40,by+2);
+  ctx.fillStyle='#ead9c6';rr(bx,by-7,bw,18,9);ctx.fill();
+  ctx.fillStyle=share>=0.5?'#ff6f91':'#4f9dff';rr(Math.min(cx,W/2),by-7,Math.abs(cx-W/2),18,9);ctx.fill();
+  ctx.fillStyle='#9a8270';ctx.fillRect(W/2-1,by-11,2,26);
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 18px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.fillStyle='#d9476e';ctx.fillText(G.players[0].name,bx-50,by+2);ctx.fillStyle='#2f6fc0';ctx.fillText(G.players[1].name,bx+bw+50,by+2);
   // 天平上的小猫头
   ctx.fillStyle=G.col.body;ctx.strokeStyle='#4a3428';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.arc(cx,by+2,11,0,7);ctx.fill();ctx.stroke();earsTop(G.col,cx,by+2);faceTop(G.col,cx,by+3,1);
+  ctx.save();ctx.translate(cx,by+2);ctx.scale(1.35,1.35);ctx.beginPath();ctx.arc(0,0,11,0,7);ctx.fill();ctx.stroke();earsTop(G.col,0,0);faceTop(G.col,0,1,1);ctx.restore();
   // 计时
   const t=Math.max(0,Math.ceil(timeLeft)),txt=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
   ctx.fillStyle=t<=10?'rgba(220,60,60,.9)':'rgba(255,248,239,.92)';rr(W/2-38,10,76,30,15);ctx.fill();
   ctx.fillStyle=t<=10?'#fff':'#4a3428';ctx.font='bold 18px ui-monospace,Menlo,monospace';ctx.fillText(txt,W/2,26);
-  // 喜好面板
-  ctx.fillStyle='rgba(255,248,239,.9)';rr(W-226,10,212,36,12);ctx.fill();
-  ctx.font='11px "PingFang SC","Microsoft YaHei",sans-serif';ctx.fillStyle='#9a8270';ctx.textAlign='left';ctx.fillText('它这局喜欢',W-220,20);
-  PREF_KEYS.forEach((k,i)=>{const x=W-212+i*33,y=36;ctx.textAlign='center';ctx.font='14px sans-serif';ctx.fillText(PREF_ICON[k],x+4,y);
-    ctx.font='bold 9px sans-serif';ctx.fillStyle=G.known[k]?'#e8902a':'#bba890';ctx.fillText(G.known[k]?'★'.repeat(G.prefs[k]):'?',x+4,y+11);ctx.fillStyle='#9a8270';});
+  // 喜好面板（右上角）
+  const px0=W-372;
+  ctx.fillStyle='rgba(255,248,239,.95)';rr(px0,10,360,88,14);ctx.fill();
+  ctx.strokeStyle='#ead9c6';ctx.lineWidth=2;rr(px0,10,360,88,14);ctx.stroke();
+  ctx.font='bold 15px "PingFang SC","Microsoft YaHei",sans-serif';ctx.fillStyle='#7a5a44';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('它这局喜欢',px0+14,28);
+  PREF_KEYS.forEach((k,i)=>{const x=px0+36+i*57;ctx.textAlign='center';
+    ctx.font='24px sans-serif';ctx.fillStyle='#4a3428';ctx.fillText(PREF_ICON[k],x,56);
+    if(G.known[k]){ctx.font='bold 13px sans-serif';ctx.fillStyle='#e8902a';ctx.fillText('★'.repeat(G.prefs[k]),x,84);}
+    else{ctx.font='bold 16px sans-serif';ctx.fillStyle='#b8a48e';ctx.fillText('?',x,84);}});
   // 横幅
   if(G.bannerT>0){
-    ctx.globalAlpha=Math.min(1,G.bannerT*2);ctx.fillStyle='rgba(74,52,40,.85)';rr(W/2-230,60,460,44,22);ctx.fill();
-    ctx.fillStyle='#fff';ctx.font='bold 20px "PingFang SC","Microsoft YaHei",sans-serif';ctx.textAlign='center';ctx.fillText(G.banner,W/2,83);ctx.globalAlpha=1;
+    ctx.globalAlpha=Math.min(1,G.bannerT*2);ctx.fillStyle='rgba(74,52,40,.85)';rr(W/2-230,108,460,44,22);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='bold 20px "PingFang SC","Microsoft YaHei",sans-serif';ctx.textAlign='center';ctx.fillText(G.banner,W/2,131);ctx.globalAlpha=1;
   }
   if(paused){ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#fff';ctx.font='bold 34px "PingFang SC",sans-serif';ctx.textAlign='center';ctx.fillText('暂停',W/2,H/2);
     ctx.font='16px "PingFang SC",sans-serif';ctx.fillText(isTouch?'点上方按钮继续':'按空格继续',W/2,H/2+36);}
