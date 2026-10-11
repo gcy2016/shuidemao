@@ -90,7 +90,7 @@ details ul{margin:6px 0 0;padding-left:18px}
     <details>
       <summary>怎么玩</summary>
       <ul>
-        <li>顶部的"猫心天平"偏向谁，时间到时猫就走向谁。</li>
+        <li>底部"猫心天平"上的小猫头往谁那边偏，就说明猫更喜欢谁；时间到时猫走向谁，谁就赢。</li>
         <li>空手靠近猫按"用/摸"是摸头；靠近书架、床、沙发、玩具篮按一下能翻出道具。</li>
         <li>手里有道具时按"用"：小鱼干（喂/扔地上引诱）、逗猫棒、毛线球（扔出去）、纸箱（放下）、猫薄荷（撒一把）。</li>
         <li>对方手里有道具时，空手贴近按"用"可以抢过来。</li>
@@ -876,13 +876,15 @@ function drawHUD(){
   // 猫心天平
   const a=G.aff,share=a[0]/(a[0]+a[1]),bw=420,bx=W/2-bw/2,by=H-34;
   ctx.fillStyle='rgba(255,248,239,.92)';rr(bx-80,by-16,bw+160,36,18);ctx.fill();
-  ctx.fillStyle='#ff6f91';rr(bx,by-4,bw*share,12,6);ctx.fill();
-  ctx.fillStyle='#4f9dff';rr(bx+bw*share,by-4,bw*(1-share),12,6);ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,.6)';ctx.fillRect(W/2-1,by-7,2,18);
+  // 像拔河：猫头往谁那边偏，就是更喜欢谁；中线到猫头之间涂领先一方的颜色
+  const cx=W/2+(0.5-share)*bw;
+  ctx.fillStyle='#ead9c6';rr(bx,by-4,bw,12,6);ctx.fill();
+  ctx.fillStyle=share>=0.5?'#ff6f91':'#4f9dff';rr(Math.min(cx,W/2),by-4,Math.abs(cx-W/2),12,6);ctx.fill();
+  ctx.fillStyle='#9a8270';ctx.fillRect(W/2-1,by-8,2,20);
   ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 13px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.fillStyle='#d9476e';ctx.fillText(G.players[0].name,bx-40,by+2);ctx.fillStyle='#2f6fc0';ctx.fillText(G.players[1].name,bx+bw+40,by+2);
   // 天平上的小猫头
-  const cx=bx+bw*share;ctx.fillStyle=G.col.body;ctx.strokeStyle='#4a3428';ctx.lineWidth=1.5;
+  ctx.fillStyle=G.col.body;ctx.strokeStyle='#4a3428';ctx.lineWidth=1.5;
   ctx.beginPath();ctx.arc(cx,by+2,11,0,7);ctx.fill();ctx.stroke();earsTop(G.col,cx,by+2);faceTop(G.col,cx,by+3,1);
   // 计时
   const t=Math.max(0,Math.ceil(timeLeft)),txt=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
